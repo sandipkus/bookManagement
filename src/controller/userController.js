@@ -89,6 +89,7 @@ const userLogin = async function (req, res) {
         let userName = req.body.userName;
         let password = req.body.password;
 
+      
         if (Object.keys(req.body).length == 0) {
             return res.status(400).send({ status: false, msg: "Data is required" })
         }
