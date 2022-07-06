@@ -1,22 +1,34 @@
 const { default: mongoose } = require("mongoose")
 
-let isBodyExist = function(userBody){
-    if(userBody===undefined||Object.keys(userBody).length===0) return true
+let isBodyExist = function (Body) {
+    if (Body === undefined || Object.keys(Body).length === 0) return true
 }
 
-let isString = function(data){
-    if(typeof(data)!= String) return false
-}
+const isValid = function (value) {
+    if (typeof value === "undefined" || value === null) return false;
+    if (typeof value === "string" && value.trim().length === 0) return false;
+    return true;
+};
 
-let isEmpty = function(data){
-    if(data === "")return true
-}
 
-let isObjectId = function(data){
+let isObjectId = function (data) {
     return mongoose.Types.ObjectId.isValid(data)
 }
 
+let containNumbers = function (data) {
+    if (/\d/.test(data)) return true
+}
+
+let checkEmail = function (data) {
+    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(data)) return true
+}
+
+const isValidObjectId = (ObjectId) => {
+        return mongoose.Types.ObjectId.isValid(ObjectId);
+    };
 module.exports.isBodyExist = isBodyExist
-module.exports.isString = isString
-module.exports.isEmpty =isEmpty
-module.exports.isObjectId =isObjectId
+module.exports.isObjectId = isObjectId
+module.exports.containNumbers = containNumbers
+module.exports.checkEmail = checkEmail
+module.exports.isValid =isValid
+module.exports.isValidObjectId =isValidObjectId

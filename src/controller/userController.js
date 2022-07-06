@@ -3,91 +3,119 @@ const validator = require("../validator/validator")
 const jwt = require("jsonwebtoken");
 
 //-------------------------POST Api(/register)-------------------------------------//------------------------------
-let userRegister = async function(req,res){
+let userRegister = async function (req, res) {
+    try {
 
-    let userBody = req.body
+        let userBody = req.body
 
-    //validate for body
-    if(validator.isBodyExist(userBody)){
-        return res.status(400).send({status:false,message:"Body can't be empty."})
+        //validate for body
+        if (validator.isBodyExist(userBody)) {
+            return res.status(400).send({ status: false, message: "Body can't be empty." })
+        }
+
+        //validation for title
+        if (!userBody.title) {
+            return res.status(400).send({ status: false, message: "Title is missing." })
+        }
+        if (userBody.title == " ") {
+            return res.status(400).send({ status: false, message: "Title can't be empty." })
+        }
+        if (["Mr", "Mrs", "Miss"].indexOf(userBody.title) === -1) {
+            return res.status(400).send({ status: false, message: "Title should be Mr,Mrs or Miss." })
+        }
+
+        //validation for name
+        if (!userBody.name) {
+            return res.status(400).send({ status: false, message: "name is missing." })
+        }
+        if (userBody.name == " ") {
+            return res.status(400).send({ status: false, message: "name can't be empty." })
+        }
+        if (validator.containNumbers(userBody.name)) {
+            return res.status(400).send({ status: false, message: "name can't contain numbers." })
+        }
+
+        //validation for phone
+        if (!userBody.phone) {
+            return res.status(400).send({ status: false, message: "phone is missing." })
+        }
+        if (userBody.phone == " ") {
+            return res.status(400).send({ status: false, message: "phone can't be empty." })
+        }
+        if (userBody.phone.length != 10) {
+            return res.status(400).send({ status: false, message: "phone number should be of 10 digits" })
+        }
+        let isPhoneExist = await userModel.findOne({ phone: userBody.phone })
+        if (isPhoneExist) return res.status(400).send({ status: false, message: "phone number already exists, plaease give another one." })
+
+        //validation for email
+        if (!userBody.email) {
+            return res.status(400).send({ status: false, message: "email is missing." })
+        }
+        if (userBody.email == " ") {
+            return res.status(400).send({ status: false, message: "email can't be empty." })
+        }
+        if (validator.checkEmail(userBody.email)) {
+            return res.status(400).send({ status: false, message: "email is invalid" })
+        }
+        let isEmailExist = await userModel.findOne({ email: userBody.email })
+        if (isEmailExist) return res.status(400).send({ status: false, message: "email already exists, Please give another one." })
+
+        //validation for password
+        if (!userBody.password) {
+            return res.status(400).send({ status: false, message: "password is missing." })
+        }
+        if (userBody.password == " ") {
+            return res.status(400).send({ status: false, message: "password can't be empty." })
+        }
+        if (userBody.password.length > 15 || userBody.password.length < 8) {
+            return res.status(400).send({ status: false, message: "password lenght should be between 8 and 15" })
+        }
+
+
+        //user data creation 
+        userData = await userModel.create(userBody)
+        res.status(201).send({ status: true, message: "Success", data: userData })
+
     }
-
-    //validation for title
-    console.log(userBody.title)
-    if(!userBody.title){
-        return res.status(400).send({status:false,message:"Title is missing."})
+    catch (err) {
+        res.status(500).send({ status: false, message: err.message })
     }
-    if(validator.isEmpty(userBody.title)){
-        return res.status(400).send({status:false,message:"Title can't be empty."})
-    }
-    if(validator.isString(userBody.title)){
-        return res.status(400).send({status:false,message:"Title should be string."})
-    }
-    if(["Mr","Mrs","Miss"].indexOf(userBody.title)===-1){
-        return res.status(400).send({status:false,message:"Title should be Mr,Mrs or Miss."})
-    }
-
-    //validation for name
-    // if(!userBody.name){
-    //     return res.status(400).send({status:false,message:"name is missing."})
-    // }
-     // if(!validator.isEmpty(userBody.name)){
-    //     return res.status(400).send({status:false,message:"name can't be empty."})
-     // }
-    // if(!validator.isString(userBody.name)){
-    //     return res.status(400).send({status:false,message:"name should be string."})
-    // }
-
-    // //validation for userId
-    // if(!userBody.userId){
-    //     return res.status(400).send({status:false,message:"userId is missing."})
-    // }
-    // if(!validator.isEmpty(userBody.userId)){
-    //     return res.status(400).send({status:false,message:"userId can't be empty."})
-    // }
-    // if(!validator.isObjectId(userBody.userId)){
-    //     return res.status(400).send({status:false,message:"userId is not correct."})
-    // }
-    // let user = await userModel.findById(userBody.userId)
-    // if(!user) return res.status(400).send({status:false,message:"userId is not valid."})
-
-
-    //user data creation 
-    userData = await userModel.create(userBody)
-    res.status(201).send({status:true,message:"Success",data:userData})
-
 };
 //------------------------------------------POST Api (login)------------------------------------//--------------------------
 
 const userLogin = async function (req, res) {
     try {
-      let userName = req.body.userName;
-      let password = req.body.password;
+        let userName = req.body.userName;
+        let password = req.body.password;
 
-      let user = await userModel.findOne({ email: userName, password: password });
-      if (Object.keys(req.body).length == 0) {
-        return res.status(400).send({ status: false, msg: "Data is required" })
-      }
-      if (!userName) {
-        return res.status(400).send({ status: false, msg: "UserName is required" })
-      }
-      if (!password) {
-        return res.status(400).send({ status: false, msg: "Password is required" })
-      }
-      if (!user) {
-        return res.status(401).send({ status: false, msg: "INVALID CREDENTIALS" });
-      }
+      
+        if (Object.keys(req.body).length == 0) {
+            return res.status(400).send({ status: false, msg: "Data is required" })
+        }
+        if (!userName) {
+            return res.status(400).send({ status: false, msg: "UserName is required" })
+        }
+        if (!password) {
+            return res.status(400).send({ status: false, msg: "Password is required" })
+        }
+        let user = await userModel.findOne({ email: userName, password: password });
+        if (!user) {
+            return res.status(401).send({ status: false, msg: "INVALID CREDENTIALS" });
+        }
 
-      let payload = {_id : user._id }                      //Setting the payload
-      let token = jwt.sign(payload, "group63");
-      res.setHeader("key-token-api", token);
-      res.send({ status: true, token: token });
+        let iat = Math.floor(Date.now() / 1000) 
+        let exp= iat + (60)
+        let payload = { _id: user._id, iat:iat, exp:exp}                      //Setting the payload
+        let token = jwt.sign(payload, "group63");
+        res.setHeader("key-token-api", token);
+        
+        res.send({ status: true, token: token });
+
     } catch (error) {
-      res.status(500).send({ staus: false, msg: error.message })
+        res.status(500).send({ staus: false, msg: error.message })
     }
 };
 
-  module.exports.userRegister = userRegister ;
-  module.exports.userLogin = userLogin ;
-
-
+module.exports.userRegister = userRegister
+module.exports.userLogin = userLogin 
