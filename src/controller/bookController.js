@@ -1,82 +1,98 @@
 const userModel = require("../models/userModel");
 const bookModel = require("../models/bookModel");
-const mongoose = require("mongoose");
+const validator = require("../validator/validator")
 
 
 
-const createBooks = async function(req, res) {
+
+const createBooks = async function (req, res) {
     try {
 
-        const isValidObjectId = (ObjectId) => {
-            return mongoose.Types.ObjectId.isValid(ObjectId);
-        };
-
-
-        const isValid = function(value) {
-            if (typeof value === "undefined" || value === null) return false;
-            if (typeof value === "string" && value.trim().length === 0) return false;
-            return true;
-        };
-
         let bookData = req.body;
-       let bookReg = /^([a-zA-Z0-9]+)/;
 
-       if (!isValidObjectId(bookData.ObjectId))
-       return res
-           .status(404)
-           .send({ status: false, msg: "Enter a valid  userId" });
+        //validation for body
+        if (validator.isBodyExist(bookData)) {
+            return res.status(400).send({ status: false, message: "Data is required, Please provide book details." })
+        }
 
-
-        if (Object.keys(bookData).length == 0)
+        //validation for title
+        if (!validator.isValid(bookData.title))
             return res
                 .status(400)
-                .send({ status: false, msg: "BookData is required" });
-        if (!isValid(bookData.title))
-            return res
-                .status(400)
-                .send({ status: false, msg: "title Name is required" });
+                .send({ status: false, message: "title is required" });
+        
+        
 
+        let bookReg = /^([a-zA-Z0-9]+)/;
         if (!bookReg.test(bookData.title)) {
             return res
                 .status(400)
-                .send({ status: false, msg: "input is invalid " });
+                .send({ status: false, message: "input is invalid " });
 
         }
-        if (!isValid(bookData.excert))
+        //validation for excerpt
+        if (!validator.isValid(bookData.excerpt))
             return res
                 .status(400)
-                .send({ status: false, msg: "excert body is required" });
-
-        if (!isValid(bookData.userId))
-            return res
-                .status(400)
-                .send({ status: false, msg: "userId is required" });
-
-        if (!isValid(bookData.category))
-            return res
-                .status(400)
-                .send({ status: false, msg: "Category of book is required" });
-
-        if (!isValid(bookData.subcategory))
-                return res
-                    .status(400)
-                    .send({ status: false, msg: "subcategory of book is required" });
+                .send({ status: false, message: "excerpt is required" });
 
         
 
-        const checkUser = await userModel.findById(bookData.userId);
+        //validation for userId
+        if (!validator.isValid(bookData.userId))
+            return res
+                .status(400)
+                .send({ status: false, message: "userId is required" });
 
+         if (!validator.isValidObjectId(bookData.userId))
+            return res
+                .status(404)
+                .send({ status: false, message: "Enter a valid  userId" });
+    
+        let checkUser = await userModel.findById(bookData.userId);
         if (!checkUser) {
             return res.status(400).send({
                 status: false,
-                msg: "This User does not exist. Please enter correct user ObjectId",
-            });
+                message: "This User does not exist. Please enter correct user ObjectId",
+            })
         }
+    
+        //validation for ISBN    
+        if (!validator.isValid(bookData.ISBN))
+            return res
+                .status(400)
+                .send({ status: false, message: "ISBN is required" });
+        
+        let isISBN = await bookModel.findOne({ISBN:bookData.ISBN})   
+        if(isISBN) return res.status(400).send({status: false,
+            message: "ISBN already exist."})
+
+        //validation for category
+        if (!validator.isValid(bookData.category))
+            return res
+                .status(400)
+                .send({ status: false, message: "Category of book is required" });
+
+        //validation for subcategory
+         if (!validator.isValid(bookData.subcategory))
+                return res
+                    .status(400)
+                    .send({ status: false, message: "subcategory of book is required" });
+
+        //validation for releasedAt
+        if (!validator.isValid(bookData.releasedAt))
+                return res
+                    .status(400)
+                    .send({ status: false, message: "released Data of book is required" });
+        
+
         let saveBooks = await bookModel.create(bookData);
-        res.status(201).send({ status: true, msg: "success", data: saveBooks });
+        res.status(201).send({ status: true, message: "success", data: saveBooks });
     } catch (err) {
-        res.status(500).send({ msg: "Error", msg: err.message });
+        res.status(500).send({ message: "Error", message: err.message });
     }
 };
 
-module.exports.createBooks=createBooks
+
+
+module.exports.createBooks = createBooks

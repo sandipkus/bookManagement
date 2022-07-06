@@ -104,10 +104,14 @@ const userLogin = async function (req, res) {
             return res.status(401).send({ status: false, msg: "INVALID CREDENTIALS" });
         }
 
-        let payload = { _id: user._id }                      //Setting the payload
+        let iat = Math.floor(Date.now() / 1000) 
+        let exp= iat + (60)
+        let payload = { _id: user._id, iat:iat, exp:exp}                      //Setting the payload
         let token = jwt.sign(payload, "group63");
         res.setHeader("key-token-api", token);
+        
         res.send({ status: true, token: token });
+
     } catch (error) {
         res.status(500).send({ staus: false, msg: error.message })
     }
