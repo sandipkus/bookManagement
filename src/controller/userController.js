@@ -89,7 +89,6 @@ const userLogin = async function (req, res) {
         let userName = req.body.userName;
         let password = req.body.password;
 
-        let user = await userModel.findOne({ email: userName, password: password });
         if (Object.keys(req.body).length == 0) {
             return res.status(400).send({ status: false, msg: "Data is required" })
         }
@@ -99,14 +98,19 @@ const userLogin = async function (req, res) {
         if (!password) {
             return res.status(400).send({ status: false, msg: "Password is required" })
         }
+        let user = await userModel.findOne({ email: userName, password: password });
         if (!user) {
             return res.status(401).send({ status: false, msg: "INVALID CREDENTIALS" });
         }
 
-        let payload = { _id: user._id }                      //Setting the payload
+        let iat = Math.floor(Date.now() / 1000) 
+        let exp= iat + (60)
+        let payload = { _id: user._id, iat:iat, exp:exp}                      //Setting the payload
         let token = jwt.sign(payload, "group63");
         res.setHeader("key-token-api", token);
+        
         res.send({ status: true, token: token });
+
     } catch (error) {
         res.status(500).send({ staus: false, msg: error.message })
     }
