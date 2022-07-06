@@ -14,10 +14,10 @@ let userRegister = async function (req, res) {
         }
 
         //validation for title
-        if (!userBody.title) {
+        if (!Object.keys(userBody).includes("title")) {
             return res.status(400).send({ status: false, message: "Title is missing." })
         }
-        if (userBody.title == " ") {
+        if (!userBody.title||userBody.title.trim() == "") {
             return res.status(400).send({ status: false, message: "Title can't be empty." })
         }
         if (["Mr", "Mrs", "Miss"].indexOf(userBody.title) === -1) {

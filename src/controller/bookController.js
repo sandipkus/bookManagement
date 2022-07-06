@@ -1,6 +1,7 @@
 const userModel = require("../models/userModel");
 const bookModel = require("../models/bookModel");
-const validator = require("../validator/validator")
+const validator = require("../validator/validator");
+const { filter } = require("mongoose/lib/helpers/query/validOps");
 
 //-----------------------------------post Api (create book)-------------------------------------------------------------------
 
@@ -99,29 +100,36 @@ const createBooks = async function (req, res) {
 const getBook = async function (req, res) {
 
     try {
-        const data = req.query
+        let filters = req.query
+        console.log(filters.userId)
 
-        //Validating data is empty or not
-        if (Object.keys(data).length == 0) {
-            const book = await bookModel.find({isDeleted: false })
-            if (book.length == 0) {
-                return res.status(404).send({ status: false, msg: "Book doesn't Exists, field is required." })
+        if(!filters){
+            let books = await bookModel.find({isDeleted:false}).select({_id:1,title:1,excerpt:1,userId:1,category:1,releasedAt:1,reviews:1})
+            if(books.length == 0) return res.status(404).send({status:false,message:"No data found."})
+            res.status(200).send({status:true,message:"Book Data",data:books})
+        }else{
+            filters.isDeleted = false;
+            if(filters.userId){
+                if(!validator.isObjectId(filters.userId)){
+                    return res.status(400).send({status:false,message:"No data found."})
+                }
             }
-            res.status(200).send({ status: true, data: book })
-
+            if(filters.subcategory){
+                if(filters.subcategory.includes(",")){
+                    let subcatArray = filters.subcategory.split(",").map(x=>x.trim())
+                    filters.subcategory = {$all:subcatArray}
+                }
+            }
+            let books = await bookModel.find(filters).select({_id:1,title:1,excerpt:1,userId:1,category:1,releasedAt:1,reviews:1})
+            books.sort(function(a, b) {
+                var textA = a.title.toUpperCase();
+                var textB = b.title.toUpperCase();
+                return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+            });
+            if(books.length == 0) return res.status(404).send({status:false,message:"No data found."})
+            res.status(200).send({status:true,message:"Book Data",data:books})
         }
 
-        //get data by query param
-
-        if (Object.keys(data).length != 0) {
-            // data.isPublished = true
-            data.isDeleted = false
-            let getbook = await bookModel.find(data).select({_Id:1, title:1, excerpt:1, userId:1, category:1, releasedAt:1, reviews:1})
-            if (getbook.length == 0) {
-                return res.status(404).send({ status: false, msg: "No such book exist, Token and userId is different." })
-            }
-            res.status(200).send({ status: true, data: getbook })
-        }
 
 
     } catch (error) {
