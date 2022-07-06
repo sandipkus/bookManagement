@@ -1,7 +1,7 @@
 const { default: mongoose } = require("mongoose")
 
-let isBodyExist = function(body){
-    if(body===undefined||Object.keys(body).length===0) return false
+let isBodyExist = function(userBody){
+    if(userBody===undefined||Object.keys(userBody).length===0) return true
 }
 
 let isString = function(data){
@@ -9,7 +9,7 @@ let isString = function(data){
 }
 
 let isEmpty = function(data){
-    if(data === "")return false
+    if(data === "")return true
 }
 
 let isObjectId = function(data){
@@ -18,5 +18,5 @@ let isObjectId = function(data){
 
 module.exports.isBodyExist = isBodyExist
 module.exports.isString = isString
-module.exports.isisEmpty =isEmpty
+module.exports.isEmpty =isEmpty
 module.exports.isObjectId =isObjectId
