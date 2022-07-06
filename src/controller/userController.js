@@ -1,7 +1,11 @@
 const userModel = require("../models/userModel")
 const validator = require("../validator/validator")
 
+
+//====================[user creation]========================
+
 let userRegister = async function(req,res){
+    try{
 
     let userBody = req.body
 
@@ -11,15 +15,11 @@ let userRegister = async function(req,res){
     }
 
     //validation for title
-    console.log(userBody.title)
     if(!userBody.title){
         return res.status(400).send({status:false,message:"Title is missing."})
     }
-    if(validator.isEmpty(userBody.title)){
+    if(userBody.title == " "){
         return res.status(400).send({status:false,message:"Title can't be empty."})
-    }
-    if(validator.isString(userBody.title)){
-        return res.status(400).send({status:false,message:"Title should be string."})
     }
     if(["Mr","Mrs","Miss"].indexOf(userBody.title)===-1){
         return res.status(400).send({status:false,message:"Title should be Mr,Mrs or Miss."})
@@ -29,31 +29,59 @@ let userRegister = async function(req,res){
     if(!userBody.name){
         return res.status(400).send({status:false,message:"name is missing."})
     }
-    if(!validator.isEmpty(userBody.name)){
+    if(userBody.name == " "){
         return res.status(400).send({status:false,message:"name can't be empty."})
     }
-    if(!validator.isString(userBody.name)){
-        return res.status(400).send({status:false,message:"name should be string."})
+    if(validator.containNumbers(userBody.name)){
+        return res.status(400).send({status:false, message:"name can't contain numbers."})
     }
 
-    // //validation for userId
-    // if(!userBody.userId){
-    //     return res.status(400).send({status:false,message:"userId is missing."})
-    // }
-    // if(!validator.isEmpty(userBody.userId)){
-    //     return res.status(400).send({status:false,message:"userId can't be empty."})
-    // }
-    // if(!validator.isObjectId(userBody.userId)){
-    //     return res.status(400).send({status:false,message:"userId is not correct."})
-    // }
-    // let user = await userModel.findById(userBody.userId)
-    // if(!user) return res.status(400).send({status:false,message:"userId is not valid."})
+    //validation for phone
+    if(!userBody.phone){
+        return res.status(400).send({status:false,message:"phone is missing."})
+    }
+    if(userBody.phone == " "){
+        return res.status(400).send({status:false,message:"phone can't be empty."})
+    }
+    if(userBody.phone.length!=10){
+        return res.status(400).send({status:false,message:"phone number should be of 10 digits"})
+    }
+    let isPhoneExist = await userModel.findOne({phone:userBody.phone})
+    if(isPhoneExist) return res.status(400).send({status:false,message:"phone number already exists, plaease give another one."})
+    
+    //validation for email
+    if(!userBody.email){
+        return res.status(400).send({status:false,message:"email is missing."})
+    }
+    if(userBody.email == " "){
+        return res.status(400).send({status:false,message:"email can't be empty."})
+    }
+    if(validator.checkEmail(userBody.email)){
+        return res.status(400).send({status:false,message:"email is invalid"})
+    }
+    let isEmailExist = await userModel.findOne({email:userBody.email})
+    if(isEmailExist) return res.status(400).send({status:false,message:"email already exists, Please give another one."})
+
+    //validation for password
+    if(!userBody.password){
+        return res.status(400).send({status:false,message:"password is missing."})
+    }
+    if(userBody.password == " "){
+        return res.status(400).send({status:false,message:"password can't be empty."})
+    }
+    if(userBody.password.length>15||userBody.password.length<8){
+        return res.status(400).send({status:false,message:"password lenght should be between 8 and 15"})
+    }
 
 
     //user data creation 
     userData = await userModel.create(userBody)
     res.status(201).send({status:true,message:"Success",data:userData})
 
+    }
+    catch(err){
+        res.status(500).send({status:false,message:err.message})
+    }
 }
 
 
