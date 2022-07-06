@@ -10,7 +10,6 @@ const authentication = function (req, res, next) {
     if (!token) token = req.headers["Key-token-api"];     //checking token with Uppercase
     if (!token) return res.status(401).send({ status: false, msg: "token must be present" });    //If neither condition satisfies & no token is present in the request header return error
 
-  console.log(token); 
   
     let decodedToken = jwt.verify(token, "group63", function(error, decodedToken){
       if(error)
