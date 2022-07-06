@@ -5,36 +5,36 @@ let userRegister = async function(req,res){
 
     let userBody = req.body
 
-    //validate for body
-    if(validator.isBodyExist(userBody)){
-        return res.status(400).send({status:false,message:"Body can't be empty."})
-    }
+    // //validate for body
+    // if(validator.isBodyExist(userBody)){
+    //     return res.status(400).send({status:false,message:"Body can't be empty."})
+    // }
 
-    //validation for title
-    console.log(userBody.title)
-    if(!userBody.title){
-        return res.status(400).send({status:false,message:"Title is missing."})
-    }
-    if(validator.isEmpty(userBody.title)){
-        return res.status(400).send({status:false,message:"Title can't be empty."})
-    }
-    if(validator.isString(userBody.title)){
-        return res.status(400).send({status:false,message:"Title should be string."})
-    }
-    if(["Mr","Mrs","Miss"].indexOf(userBody.title)===-1){
-        return res.status(400).send({status:false,message:"Title should be Mr,Mrs or Miss."})
-    }
+    // //validation for title
+    // console.log(userBody.title)
+    // if(!userBody.title){
+    //     return res.status(400).send({status:false,message:"Title is missing."})
+    // }
+    // if(validator.isEmpty(userBody.title)){
+    //     return res.status(400).send({status:false,message:"Title can't be empty."})
+    // }
+    // if(validator.isString(userBody.title)){
+    //     return res.status(400).send({status:false,message:"Title should be string."})
+    // }
+    // if(["Mr","Mrs","Miss"].indexOf(userBody.title)===-1){
+    //     return res.status(400).send({status:false,message:"Title should be Mr,Mrs or Miss."})
+    // }
 
-    //validation for name
-    if(!userBody.name){
-        return res.status(400).send({status:false,message:"name is missing."})
-    }
-    if(!validator.isEmpty(userBody.name)){
-        return res.status(400).send({status:false,message:"name can't be empty."})
-    }
-    if(!validator.isString(userBody.name)){
-        return res.status(400).send({status:false,message:"name should be string."})
-    }
+    // //validation for name
+    // if(!userBody.name){
+    //     return res.status(400).send({status:false,message:"name is missing."})
+    // }
+    // if(!validator.isEmpty(userBody.name)){
+    //     return res.status(400).send({status:false,message:"name can't be empty."})
+    // }
+    // if(!validator.isString(userBody.name)){
+    //     return res.status(400).send({status:false,message:"name should be string."})
+    // }
 
     // //validation for userId
     // if(!userBody.userId){

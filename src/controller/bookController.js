@@ -11,8 +11,20 @@ const createBooks = async function(req, res) {
             return mongoose.Types.ObjectId.isValid(ObjectId);
         };
 
+        const isValid = function(value) {
+            if (typeof value === "undefined" || value === null) return false;
+            if (typeof value === "string" && value.trim().length === 0) return false;
+            return true;
+        };
+
         let bookData = req.body;
         let bookReg = /^([a-zA-Z0-9]+)/;
+
+        if (!isValidObjectId(bookData.ObjectId))
+            return res
+                .status(404)
+                .send({ status: false, msg: "Enter a valid  userId" });
+
 
         if (Object.keys(bookData).length == 0)
             return res
@@ -49,19 +61,7 @@ const createBooks = async function(req, res) {
                     .status(400)
                     .send({ status: false, msg: "subcategory of book is required" });
 
-        // if (validString.test(blogData.body) ||
-        //     validString.test(blogData.tags) ||
-        //     validString.test(blogData.category) ||
-        //     validString.test(blogData.subcategory))
-        //     return res
-        //         .status(400)
-        //         .send({ status: false, msg: "Data must not contains numbers" });
-
-        if (!isValidObjectId(blogData.userId))
-            return res
-                .status(404)
-                .send({ status: false, msg: "Enter a valid  userId" });
-
+        
 
         const checkUser = await userModel.findById(bookData.userId);
 
