@@ -12,7 +12,7 @@ const authentication = function (req, res, next) {
 
   
     let decodedToken = jwt.verify(token, "group63", function(error, decodedToken){
-      if(error)
+      if(!decodedToken)
       return res.status(401).send({ status: false, msg: "token is invalid" });
       
       req.loggedInUserId = decodedToken._id
