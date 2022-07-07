@@ -13,7 +13,7 @@ router.post("/login" ,user.userLogin )
 
 router.post("/books",MW.authentication , book.createBooks)
 
-router.get("/books", MW.authentication, book.getBook)
+router.get("/books", book.getBook)
 
 
 
