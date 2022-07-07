@@ -16,41 +16,28 @@ const createBooks = async function (req, res) {
 
         //validation for title
         if (!validator.isValid(bookData.title))
-            return res
-                .status(400)
-                .send({ status: false, message: "title is required" });
+            return res .status(400).send({ status: false, message: "title is required" });
 
         let bookReg = /^([a-zA-Z0-9]+)/;
         if (!bookReg.test(bookData.title)) {
-            return res
-                .status(400)
-                .send({ status: false, message: "input is invalid " });
-
+            return res.status(400).send({ status: false, message: "input is invalid " });
         }
+
         //validation for excerpt
         if (!validator.isValid(bookData.excerpt))
-            return res
-                .status(400)
-                .send({ status: false, message: "excerpt is required" });
-
-
+            return res.status(400).send({ status: false, message: "excerpt is required" });
 
         //validation for userId
         if (!validator.isValid(bookData.userId))
-            return res
-                .status(400)
-                .send({ status: false, message: "userId is required" });
+            return res.status(400).send({ status: false, message: "userId is required" });
 
         if (!validator.isValidObjectId(bookData.userId))
-            return res
-                .status(404)
-                .send({ status: false, message: "Enter a valid  userId" });
+            return res.status(404).send({ status: false, message: "Enter a valid  userId" });
+
         if (req.loggedInUserId != bookData.userId) {
-            return res.status(401).send({
-                status: false,
-                message: "You are not allowed to create or modify"
-            })
+            return res.status(401).send({status: false, message: "You are not allowed to create or modify"})
         }
+        
         let checkUser = await userModel.findById(bookData.userId);
         if (!checkUser) {
             return res.status(400).send({
