@@ -6,8 +6,8 @@ const bookModel = require("../models/bookModel");
 
 const authentication = function (req, res, next) {
   try {
-    let token = req.headers["key-token-api"];         //Getting token from header
-    if (!token) token = req.headers["Key-token-api"];     //checking token with Uppercase
+    let token = req.headers["X-Api-Key"];         //Getting token from header
+    if (!token) token = req.headers["x-api-key"];     //checking token with Uppercase
     if (!token) return res.status(401).send({ status: false, msg: "token must be present" });    //If neither condition satisfies & no token is present in the request header return error
 
   
@@ -24,7 +24,7 @@ const authentication = function (req, res, next) {
 
   } catch (error) {
     return res.status(500).send({ status: false, Error: error.message })
-  }
+  }   
 };
 
 

@@ -108,7 +108,7 @@ const userLogin = async function (req, res) {
         let exp= iat + (60)
         let payload = { _id: user._id, iat:iat, exp:exp}                      //Setting the payload
         let token = jwt.sign(payload, "group63");
-        res.setHeader("key-token-api", token);
+        res.setHeader("x-api-key", token);
         
         res.send({ status: true, token: token });
 
