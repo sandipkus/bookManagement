@@ -11,12 +11,14 @@ router.post("/login" ,user.userLogin )
 
 //---------------------------------------------------Books Api----------------------------------------------------------
 
-router.post("/books",book.createBooks)
-
-router.get("/books", book.getBook)
+router.post("/books",MW.authentication,book.createBooks)
 
 router.put("/books/:bookId", book.updateBook)
        
 
   
+router.get("/books",MW.authentication,book.getBook)
+
+router.delete("/books/:bookId",MW.authentication,book.deleteBook)
+
 module.exports = router
