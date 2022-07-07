@@ -17,6 +17,8 @@ router.put("/books/:bookId",MW.authentication, book.updateBook)
        
 router.get("/books",MW.authentication,book.getBook)
 
+router.get("/books/:bookId",MW.authentication,book.getBookById)
+
 router.delete("/books/:bookId",MW.authentication,book.deleteBook)
 
 module.exports = router
