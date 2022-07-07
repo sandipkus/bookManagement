@@ -13,10 +13,8 @@ router.post("/login" ,user.userLogin )
 
 router.post("/books",MW.authentication,book.createBooks)
 
-router.put("/books/:bookId", book.updateBook)
+router.put("/books/:bookId",MW.authentication, book.updateBook)
        
-
-  
 router.get("/books",MW.authentication,book.getBook)
 
 router.delete("/books/:bookId",MW.authentication,book.deleteBook)
