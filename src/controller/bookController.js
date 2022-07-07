@@ -148,14 +148,12 @@ let getBooksById = async (req, res) => {
       let bookId = req.params.bookId;
   
       //If provided booikId is not valid!
-      if (!validator.isValidObjectId(bookId)) {
-        return res
-          .status(400)
-          .send({ status: true, message: "bookId is required in params" });
+      if (!validator.isObjectId(bookId)) {
+        return res.status(400).send({ status: true, message: "Enter valid bookId" });
       }
   
       //searching for book (document) with the bookId given by user
-      let findbook = await bookModel.findById({_id:bookId}).select({ _v: 0 });
+      let findbook = await bookModel.findById({_id:bookId})
   
       //if no book found
       if (!findbook)
@@ -170,20 +168,9 @@ let getBooksById = async (req, res) => {
           .status(404)
           .send({ status: false, message: "Book already deleted!" });
       }
+      res.status(200).send({status:true,message:"succeed",data:findbook})
   
-      //finding reviews (in array) by bookId
-      let reviews = await reviewModel.find({ bookId: bookId , isDeleted: false });
-  
-      //making a new object and adding a new field (reviewsData)
-      let booksWithReview = findbook.toObject();
-      Object.assign(booksWithReview, { reviewsData: reviews });
-  
-      //sending successful response with new object
-      return res.status(200).send({
-        status: true,
-        message: "Books list",
-        data: booksWithReview,
-      });
+      
     } catch (err) {
       res.status(500).send({ status: false, data: err.message });
     }
@@ -209,4 +196,5 @@ let deleteBook = async function(req,res){
 
 module.exports.createBooks = createBooks
 module.exports.getBook = getBook
+module.exports.getBooksById = getBooksById
 module.exports.deleteBook = deleteBook
