@@ -215,7 +215,7 @@ let deleteBook = async function (req, res) {
         if (req.loggedInUserId != book.userId.toString()) {
             return res.status(401).send({ status: false, message: "You are not authorized to delete", })
         }
-        let deletedBook = await bookModel.findOneAndDelete({ _id: bookId },{isDeleted:true},{ new: true })
+        let deletedBook = await bookModel.findOneAndUpdate({ _id: bookId },{isDeleted:true},{ new: true })
         res.status(200).send({ status: true, message: "Success", data: deletedBook })
 
     }catch(err){
