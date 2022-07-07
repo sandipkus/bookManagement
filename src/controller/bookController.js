@@ -141,5 +141,23 @@ const getBook = async function (req, res) {
 }
   
 
+let deleteBook = async function(req,res){
+    let bookId = req.params.bookId
+    if(!validator.isObjectId(bookId)){
+        return res.status(400).send({status: false,message: "Enter a correct book ObjectId",})
+    }
+    let book = await bookModel.findOne({_id:bookId,isDeleted:false})
+    if(!book) return res.status(404).send({status: false,message: "This Book does not exist. Please enter correct Book ObjectId",})
+
+    if(req.loggedInUserId!=book.userId.toString()){
+        return res.status(401).send({status: false,message: "You are not authorized to delete",})
+    }
+    let deletedBook = await bookModel.findOneAndDelete({_id:bookId},{new:true})
+    res.status(200).send({status:true,message:"Success",data:deletedBook})
+
+
+}
+
 module.exports.createBooks = createBooks
 module.exports.getBook = getBook
+module.exports.deleteBook = deleteBook

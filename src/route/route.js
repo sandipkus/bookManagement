@@ -15,6 +15,6 @@ router.post("/books",MW.authentication,book.createBooks)
 
 router.get("/books",MW.authentication,book.getBook)
 
-
+router.delete("/books/:bookId",MW.authentication,book.deleteBook)
 
 module.exports = router
