@@ -264,12 +264,10 @@ let deleteBook = async function(req,res){
     }
     let deletedBook = await bookModel.findOneAndDelete({_id:bookId},{new:true})
     res.status(200).send({status:true,message:"Success",data:deletedBook})
-
-
 }
 
-module.exports.createBooks = createBooks
-module.exports.getBook = getBook
-module.exports.getBooksById = getBooksById
+module.exports.createBooks = createBooks;
+module.exports.getBook = getBook;
+module.exports.getBooksById = getBooksById;
 module.exports.updateBook = updateBook;
-module.exports.deleteBook = deleteBook
+module.exports.deleteBook = deleteBook;
