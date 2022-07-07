@@ -50,7 +50,11 @@ const createBooks = async function (req, res) {
             return res
                 .status(404)
                 .send({ status: false, message: "Enter a valid  userId" });
-    
+        if(req.loggedInUserId!=bookData.userId){
+            return res.status(401).send({
+                status: false,
+                message:"You are not allowed to create or modify"})
+        }
         let checkUser = await userModel.findById(bookData.userId);
         if (!checkUser) {
             return res.status(400).send({
@@ -101,7 +105,6 @@ const getBook = async function (req, res) {
 
     try {
         let filters = req.query
-        console.log(filters.userId)
 
         if(!filters){
             let books = await bookModel.find({isDeleted:false}).select({_id:1,title:1,excerpt:1,userId:1,category:1,releasedAt:1,reviews:1})
