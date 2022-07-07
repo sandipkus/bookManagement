@@ -11,9 +11,11 @@ router.post("/login" ,user.userLogin )
 
 //---------------------------------------------------Books Api----------------------------------------------------------
 
-router.post("/books",MW.authentication , book.createBooks)
+router.post("/books",MW.authentication ,MW.authorisation, book.createBooks)
 
-router.get("/books", book.getBook)
+router.get("/books",MW.authentication, book.getBook)
+
+router.get("/books/:bookId",MW.authentication,MW.authorisation, book.getBooksById)
 
 
 
