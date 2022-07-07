@@ -10,7 +10,6 @@ const isValid = function (value) {
     return true;
 };
 
-
 let isObjectId = function (data) {
     return mongoose.Types.ObjectId.isValid(data)
 }
