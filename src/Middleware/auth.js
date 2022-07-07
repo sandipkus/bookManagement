@@ -38,7 +38,7 @@ const authorisation = async function (req, res, next) {
   try {
 
     let userToBeModified = req.params.bookId
-    console.log(userToBeModified)
+    //console.log(userToBeModified)
 
     let book = await bookModel.findById({ _id: userToBeModified })    //id in bookModel is same as getting from req.params or not
     //let userLoggedIn = decodedToken._id

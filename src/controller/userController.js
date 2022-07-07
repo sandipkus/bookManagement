@@ -3,6 +3,7 @@ const validator = require("../validator/validator")
 const jwt = require("jsonwebtoken");
 
 //-------------------------POST Api(/register)-------------------------------------//------------------------------
+
 let userRegister = async function (req, res) {
     try {
 
