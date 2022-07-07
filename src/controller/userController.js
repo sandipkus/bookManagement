@@ -26,10 +26,10 @@ let userRegister = async function (req, res) {
         }
 
         //validation for name
-        if (!userBody.name) {
+        if (!Object.keys(userBody).includes("name")) {
             return res.status(400).send({ status: false, message: "name is missing." })
         }
-        if (userBody.name == " ") {
+        if (userBody.name.trim() == "") {
             return res.status(400).send({ status: false, message: "name can't be empty." })
         }
         if (validator.containNumbers(userBody.name)) {
@@ -37,10 +37,10 @@ let userRegister = async function (req, res) {
         }
 
         //validation for phone
-        if (!userBody.phone) {
+        if (!Object.keys(userBody).includes("phone")) {
             return res.status(400).send({ status: false, message: "phone is missing." })
         }
-        if (userBody.phone == " ") {
+        if (userBody.phone.trim()== "") {
             return res.status(400).send({ status: false, message: "phone can't be empty." })
         }
         if (userBody.phone.length != 10) {
@@ -50,10 +50,10 @@ let userRegister = async function (req, res) {
         if (isPhoneExist) return res.status(400).send({ status: false, message: "phone number already exists, plaease give another one." })
 
         //validation for email
-        if (!userBody.email) {
+        if (!Object.keys(userBody).includes("email")) {
             return res.status(400).send({ status: false, message: "email is missing." })
         }
-        if (userBody.email == " ") {
+        if (userBody.email.trim() == "") {
             return res.status(400).send({ status: false, message: "email can't be empty." })
         }
         if (validator.checkEmail(userBody.email)) {
@@ -63,10 +63,10 @@ let userRegister = async function (req, res) {
         if (isEmailExist) return res.status(400).send({ status: false, message: "email already exists, Please give another one." })
 
         //validation for password
-        if (!userBody.password) {
+        if (!Object.keys(userBody).includes("password")) {
             return res.status(400).send({ status: false, message: "password is missing." })
         }
-        if (userBody.password == " ") {
+        if (userBody.password.trim() == " ") {
             return res.status(400).send({ status: false, message: "password can't be empty." })
         }
         if (userBody.password.length > 15 || userBody.password.length < 8) {

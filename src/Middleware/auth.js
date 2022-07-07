@@ -37,28 +37,28 @@ const authentication = function (req, res, next) {
 
 //--------------------------------- AUTHORISATION MIDDLEWARE ----------------------------------------------------------------------------------
 
-const authorisation = async function (req, res, next) {
+// const authorisation = async function (req, res, next) {
 
-  try {
+//   try {
 
-    let userToBeModified = req.body.userId
-    console.log(userToBeModified)
+//     let userToBeModified = req.body.userId
+//     console.log(userToBeModified)
 
-    let book = await bookModel.findById({ _id: userToBeModified })    //id in bookModel is same as getting from req.params or not
-    //let userLoggedIn = decodedToken._id
-    console.log(book)
-    console.log(req.loggedInUserId)
-    if (book.userId != req.loggedInUserId) {    //We have stored decoded token into req.loggedInuserId and comparing it with blog.authorId
-      return res.status(403).send({ status: false, msg: 'user logged is not allowed to modify the requested data' })
-    }
-    next()
-  } catch (err) {
-    return res.status(500).send({ status: false, msg: err.message })
-  }
+//     let book = await bookModel.findById({ _id: userToBeModified })    //id in bookModel is same as getting from req.params or not
+//     //let userLoggedIn = decodedToken._id
+//     console.log(book)
+//     console.log(req.loggedInUserId)
+//     if (book.userId != req.loggedInUserId) {    //We have stored decoded token into req.loggedInuserId and comparing it with blog.authorId
+//       return res.status(403).send({ status: false, msg: 'user logged is not allowed to modify the requested data' })
+//     }
+//     next()
+//   } catch (err) {
+//     return res.status(500).send({ status: false, msg: err.message })
+//   }
 
 
-}
+// }
 
 
 module.exports.authentication = authentication
-module.exports.authorisation = authorisation
+// module.exports.authorisation = authorisation

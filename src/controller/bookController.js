@@ -1,6 +1,7 @@
 const userModel = require("../models/userModel");
 const bookModel = require("../models/bookModel");
 const validator = require("../validator/validator");
+const reviewModel = require("../models/reviewModel");
 //-----------------------------------post Api (create book)-------------------------------------------------------------------
 
 const createBooks = async function (req, res) {
@@ -14,7 +15,7 @@ const createBooks = async function (req, res) {
 
         //validation for title
         if (!validator.isValid(bookData.title))
-            return res .status(400).send({ status: false, message: "title is required" });
+            return res.status(400).send({ status: false, message: "title is required" });
 
         let bookReg = /^([a-zA-Z0-9]+)/;
         if (!bookReg.test(bookData.title)) {
@@ -33,9 +34,9 @@ const createBooks = async function (req, res) {
             return res.status(404).send({ status: false, message: "Enter a valid  userId" });
         //authorization 
         if (req.loggedInUserId != bookData.userId) {
-            return res.status(401).send({status: false, message: "You are not allowed to create or modify"})
+            return res.status(401).send({ status: false, message: "You are not allowed to create or modify" })
         }
-        
+
         let checkUser = await userModel.findById(bookData.userId);
         if (!checkUser) {
             return res.status(400).send({
@@ -147,7 +148,25 @@ let getBooksById = async (req, res) => {
                 .status(404)
                 .send({ status: false, message: "Book already deleted!" });
         }
-        res.status(200).send({ status: true, message: "succeed", data: findbook })
+
+        let reviews = await reviewModel.find({bookId:bookId})
+
+        let bookWithReviews = {
+            _id: findbook._id,
+            title:findbook.title,
+            excerpt:findbook.excerpt,
+            userId:findbook.userId,
+            category:findbook.category,
+            subcategory:findbook.subcategory,
+            isDeleted:findbook.isDeleted,
+            reviews:findbook.reviews,
+            releasedAt:findbook.releasedAt,
+            createdAt:findbook.createdAt,
+            updatedAt:findbook.updatedAt,
+            reviewsData:reviews
+
+        }
+        res.status(200).send({ status: true, message: "succeed", data: bookWithReviews })
 
 
     } catch (err) {
@@ -177,7 +196,6 @@ const updateBook = async function (req, res) {
             return res.status(401).send({ status: false, message: "You aren't authorized to update." })
         }
         let bookData = req.body;
-        console.log(bookData.title)
 
         if (validator.isBodyExist(bookData))
             return res.status(400).send({
@@ -235,7 +253,7 @@ let deleteBook = async function (req, res) {
         if (req.loggedInUserId != book.userId.toString()) {
             return res.status(401).send({ status: false, message: "You are not authorized to delete", })
         }
-        let deletedBook = await bookModel.findOneAndUpdate({ _id: bookId },{isDeleted:true},{ new: true })
+        let deletedBook = await bookModel.findOneAndUpdate({ _id: bookId }, { isDeleted: true }, { new: true })
         res.status(200).send({ status: true, message: "Success", data: deletedBook })
 
     } catch (err) {
