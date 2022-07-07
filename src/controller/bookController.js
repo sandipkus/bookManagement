@@ -5,14 +5,11 @@ const { filter } = require("mongoose/lib/helpers/query/validOps");
 
 //-----------------------------------post Api (create book)-------------------------------------------------------------------
 
-
-
 const createBooks = async function (req, res) {
-    try {
+  try {
+    let bookData = req.body;
 
-        let bookData = req.body;
-
-        //validation for body
+    //validation for body
         if (validator.isBodyExist(bookData)) {
             return res.status(400).send({ status: false, message: "Data is required, Please provide book details." })
         }
@@ -23,8 +20,6 @@ const createBooks = async function (req, res) {
                 .status(400)
                 .send({ status: false, message: "title is required" });
         
-        
-
         let bookReg = /^([a-zA-Z0-9]+)/;
         if (!bookReg.test(bookData.title)) {
             return res
@@ -97,13 +92,12 @@ const createBooks = async function (req, res) {
     } catch (err) {
         res.status(500).send({ message: "Error", message: err.message });
     }
-};
+}
 
 //-----------------------------------get Api (get book)-------------------------------------------------------------------
 
 const getBook = async function (req, res) {
-
-    try {
+try {
         let filters = req.query
 
         if(!filters){
@@ -132,15 +126,12 @@ const getBook = async function (req, res) {
             if(books.length == 0) return res.status(404).send({status:false,message:"No data found."})
             res.status(200).send({status:true,message:"Book Data",data:books})
         }
-
-
-
-    } catch (error) {
-        res.status(500).send({ status: false, Error: error.message })
-    }
+      }catch (error) {
+    res.status(500).send({ status: false, Error: error.message });
+  }
 }
 
-//---------------------------------------
+//---------------------------------------get Api(find book by BookId)----------------------------------------
 
 let getBooksById = async (req, res) => {
     try {
@@ -175,7 +166,90 @@ let getBooksById = async (req, res) => {
       res.status(500).send({ status: false, data: err.message });
     }
   };
+
+  //----------------------------------put Api (update Book)--------------------------------------------
+
+const updateBook = async function (req, res) {
+  try{
+  let bookId = req.params.bookId;
+  let {...bookData} = req.body;
+ 
+   if (validator.isBodyExist(bookData)) 
+    return res.status(400).send({
+      status: false,
+      message: " Please provide book details to Update",
+    });
+
+    let findBookId = await bookModel.findById(bookId); 
+        if (!findBookId)
+            return res.status(404).send({ status: false, msg: "No such book exist" });
+
+        if (findBookId.isDeleted == true)
+            return res.status(404).send({
+                status: false,
+                msg: "No such book found or has already been deleted",
+            });
   
+    
+  //validation for title
+  if (validator.isValid(bookData.title)){
+    return res
+      .status(400)
+      .send({ status: false, message: "title is required" });
+  }
+  let bookReg = /^([a-zA-Z0-9]+)/;
+  if (!bookReg.test(bookData.title)) {
+    return res
+      .status(400)
+      .send({ status: false, message: "input is invalid " });
+  }
+
+  let titlePresent = await bookModel.findOne({ title: title });
+  if (titlePresent) {
+    return res
+      .status(400)
+      .send({
+        status: false,
+        message: ` '${title}' is already exist!. Please try new title`,
+      });
+    }
+
+  //validation for excerpt
+  if (!validator.isValid(bookData.excerpt)){
+    return res
+      .status(400)
+      .send({ status: false, message: "excerpt is required" });
+  }
+  //validation for releasedAt
+  if (!validator.isValid(bookData.releasedAt)){
+    return res
+      .status(400)
+      .send({ status: false, message: "released Data of book is required in the format(YYYY-MM-DD)" });
+      
+};
+//validation for ISBN
+if (!validator.isValid(bookData.ISBN))
+return res
+  .status(400)
+  .send({ status: false, message: "ISBN is required" });
+
+let isISBN = await bookModel.findOne({ ISBN: bookData.ISBN });
+if (isISBN){
+return res
+  .status(400)
+  .send({ status: false, message: ` '${ISBN}' is already exist!. Please try new ISBN` });
+
+}
+//update Book details
+let updatedBook = await bookModel.findOneAndUpdate({_id:bookId},{...bookData},{new:true});
+return res
+  .status(200)
+  .send({ status: true,message:"Success", data:updatedBook });
+} catch (error) {
+    res.status(500).send({ status: false, Error: error.message });
+}
+}
+//----------------------------------Delete(Api)------------------------------------------------------------
 
 let deleteBook = async function(req,res){
     let bookId = req.params.bookId
@@ -197,4 +271,5 @@ let deleteBook = async function(req,res){
 module.exports.createBooks = createBooks
 module.exports.getBook = getBook
 module.exports.getBooksById = getBooksById
+module.exports.updateBook = updateBook;
 module.exports.deleteBook = deleteBook
