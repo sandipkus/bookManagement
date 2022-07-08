@@ -2,6 +2,7 @@ const express = require("express")
 const router = express.Router()
 const book = require("../controller/bookController")
 const user = require("../controller/userController")
+const review = require("../controller/reviewController")
 const MW = require("../Middleware/auth")
 
 //-------------------User Api-----------------------------------------//----------------------------//----------
@@ -21,5 +22,8 @@ router.put("/books/:bookId",MW.authentication, book.updateBook)
        
 router.delete("/books/:bookId",MW.authentication, book.deleteBook)
 
+router.delete("/books/:bookId",MW.authentication,book.deleteBook)
 
+
+router.post("/books/:bookId/review",MW.authentication,review.addReview)
 module.exports = router
