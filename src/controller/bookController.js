@@ -192,9 +192,9 @@ const updateBook = async function (req, res) {
                 msg: "No such book found or has already been deleted",
             });
         //authorization
-        if (req.loggedInUserId != findBookId.userId) {
-            return res.status(401).send({ status: false, message: "You aren't authorized to update." })
-        }
+        // if (req.loggedInUserId != findBookId.userId) {
+        //     return res.status(401).send({ status: false, message: "You aren't authorized to update." })
+        // }
         let bookData = req.body;
 
         if (validator.isBodyExist(bookData))
