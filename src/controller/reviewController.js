@@ -14,11 +14,7 @@ const addReview = async function(req,res){
    
 
     let review = req.body
-    console.log(review.bookId)
-    console.log(review.reviewedBy)
-    console.log(review.reviewdAt)
-    console.log(review.rating)
-    console.log(review.review)
+
     //validation for bookId
     if (!Object.keys(review).includes("bookId")) {
         return res.status(400).send({ status: false, message: "bookId is missing." })
@@ -54,7 +50,7 @@ const addReview = async function(req,res){
     await reviewModel.create(review)
     newReview = book.reviews+1
     bookUpdate = await bookModel.findOneAndUpdate({_id:bookId},{reviews:newReview},{new:true})
-    res.status(201).send({ status: true, message: "Success", data: bookUpdate })
+    res.status(200).send({ status: true, message: "Success", data: bookUpdate })
     }
     catch(err){
         res.status(500).send({ status: false, message: err.message })

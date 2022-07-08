@@ -2,6 +2,8 @@ const userModel = require("../models/userModel");
 const bookModel = require("../models/bookModel");
 const validator = require("../validator/validator");
 const reviewModel = require("../models/reviewModel");
+const moment = require("moment")
+
 //-----------------------------------post Api (create book)-------------------------------------------------------------------
 
 const createBooks = async function (req, res) {
@@ -70,11 +72,11 @@ const createBooks = async function (req, res) {
                 .send({ status: false, message: "subcategory of book is required" });
 
         //validation for releasedAt
-        if (!validator.isValid(bookData.releasedAt))
-            return res
-                .status(400)
-                .send({ status: false, message: "released Data of book is required" });
-
+        // if (!validator.isValid(bookData.releasedAt))
+        //     return res
+        //         .status(400)
+        //         .send({ status: false, message: "released Date of book is required" });
+        bookData.releasedAt = moment(new Date()).format("YYYY-MM-DD")
 
         let saveBooks = await bookModel.create(bookData);
         res.status(201).send({ status: true, message: "success", data: saveBooks });
@@ -191,10 +193,7 @@ const updateBook = async function (req, res) {
                 status: false,
                 msg: "No such book found or has already been deleted",
             });
-        //authorization
-        // if (req.loggedInUserId != findBookId.userId) {
-        //     return res.status(401).send({ status: false, message: "You aren't authorized to update." })
-        // }
+       
         let bookData = req.body;
 
         if (validator.isBodyExist(bookData))
@@ -249,10 +248,7 @@ let deleteBook = async function (req, res) {
         }
         let book = await bookModel.findOne({ _id: bookId, isDeleted: false })
         if (!book) return res.status(404).send({ status: false, message: "This Book does not exist. Please enter correct Book ObjectId", })
-        //authorization
-        if (req.loggedInUserId != book.userId.toString()) {
-            return res.status(401).send({ status: false, message: "You are not authorized to delete", })
-        }
+       
         let deletedBook = await bookModel.findOneAndUpdate({ _id: bookId }, { isDeleted: true }, { new: true })
         res.status(200).send({ status: true, message: "Success", data: deletedBook })
 

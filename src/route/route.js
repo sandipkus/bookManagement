@@ -20,10 +20,13 @@ router.get("/books/:bookId",MW.authentication, book.getBooksById)
 
 router.put("/books/:bookId",MW.authentication,MW.authorisation, book.updateBook)
        
-router.delete("/books/:bookId",MW.authentication, book.deleteBook)
-
-router.delete("/books/:bookId",MW.authentication,book.deleteBook)
+router.delete("/books/:bookId",MW.authentication,MW.authorisation, book.deleteBook)
 
 
 router.post("/books/:bookId/review",MW.authentication,review.addReview)
+
+
+router.all("/**",function(req,res){
+    res.status(404).send({status:false,message:"The api that you have requested is not available"})
+})
 module.exports = router
