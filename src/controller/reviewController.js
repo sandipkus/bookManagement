@@ -58,4 +58,75 @@ const addReview = async function(req,res){
     
 }
 
+const updateReview = async function(req,res){
+    try{
+    let bookId = req.params.bookId;
+    let reviewId = req.params.reviewId
+    let reviewData = req.body   
+    let bookData = req.body;
+    //validation for bookId
+    if (!validator.isObjectId(bookId)) {
+        return res.status(404).send({ status: false, msg: "enter a valid bookId" });
+    }
+    let findBookId = await bookModel.findById(bookId);
+    if (!findBookId)
+        return res.status(404).send({ status: false, msg: "No such book exist" });
+
+         //validation for reviewId
+    if (!validator.isObjectId(reviewId)) {
+        return res.status(404).send({ status: false, msg: "enter a valid reviewId" });
+    }
+    let findReviewId = await reviewModel.findById(reviewId);
+    if (!findReviewId)
+        return res.status(404).send({ status: false, msg: "No such review exist" });
+    
+    //if that book is deleted
+    if (findBookId.isDeleted == true)
+        return res.status(404).send({status: false,msg: "No such book found or has already been deleted",});
+    
+    //if that review is deleted
+     if (findReviewId.isDeleted == true)
+        return res.status(404).send({status: false,msg: "No such review found or has already been deleted",});
+    
+    //validation for body
+    if (validator.isBodyExist(reviewData))
+        return res.status(400).send({status: false,message: " Please provide review details to Update",});
+
+        
+        let reviewReg = /^([a-zA-Z]+)/
+        if (!reviewReg.test(reviewModel.review)) {
+            return res.status(400).send({ status: false, message: "! review input is invalid. Please enter correct input to give particular review" });
+        }
+
+        let isReview = await reviewModel.findOne({ review: reviewData.review });
+        if (isReview) {
+        return res.status(400).send({ status: false, message: ` '${reviewData.review}' is already exist!. Please give some other review` });
+        }
+
+        
+        if(reviewData.rating<1||reviewData.rating>5){
+            return res.status(400).send({ status: false, message: "rating should be between 1 to 5" })
+        }
+        let isRating = await reviewModel.findOne({ rating: reviewData.rating });
+        if (isRating) {
+        return res.status(400).send({ status: false, message: ` '${reviewData.rating}' is already exist!. Please give some other rating` });
+        }
+        
+        if (reviewData.reviewedBy.trim() == " "){
+           return res.status(400).send({ status: false, message: "reviewedBy can't be empty" })
+        }
+        let isReviewedBy = await reviewModel.findOne({ reviewedBy: reviewData.reviewedBy });
+        if (isReviewedBy) {
+        return res.status(400).send({ status: false, message: ` '${reviewData.reviewedBy}' is already exist!. Please give some other reviewer name` });
+        }
+
+        let updatedReview = await bookModel.findOneAndUpdate({ _id: reviewId }, reviewData, { new: true });
+        return res.status(200).send({ status: true, message: "Success", data: updatedReview });
+    } catch (error) {
+        res.status(500).send({ status: false, Error: error.message });
+    }
+}
+        
+
 module.exports.addReview = addReview
+module.exports.updateReview = updateReview
