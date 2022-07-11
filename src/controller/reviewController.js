@@ -17,14 +17,7 @@ const addReview = async function(req,res){
 
     let review = req.body
     review.bookId = bookId
-    //validation for bookId
-    // if (!Object.keys(review).includes("bookId")) {
-    //     return res.status(400).send({ status: false, message: "bookId is missing." })
-    // }
-    // if (review.bookId.trim() == " ") {
-    //     return res.status(400).send({ status: false, message: "bookId can't be empty." })
-    // }
-
+   
     //validation for reviewedBy
     if (!Object.keys(review).includes("reviewedBy")) {
         return res.status(400).send({ status: false, message: "reviewedBy is missing." })
@@ -32,16 +25,8 @@ const addReview = async function(req,res){
     if (review.reviewedBy.trim() == " ") {
         return res.status(400).send({ status: false, message: "reviewedBy can't be empty." })
     }
-
     //validation for reviewedAt
     review.reviewedAt = moment().toISOString();
-   // releasedAt:moment(releasedAt)
-    // if (!Object.keys(review).includes("reviewedAt")) {
-    //     return res.status(400).send({ status: false, message: "reviewedAt is missing." })
-    // }
-    // if (review.reviewdAt== "") {
-    //     return res.status(400).send({ status: false, message: "reviewedAt can't be empty." })
-    // }
 
     //validation for rating
     if (!Object.keys(review).includes("rating")) {
@@ -49,7 +34,6 @@ const addReview = async function(req,res){
     }
     if(review.rating<1||review.rating>5){
         return res.status(400).send({ status: false, message: "rating should be between 1 to 5" })
-
     }
     await reviewModel.create(review)
     let noOfReviews = await (await reviewModel.find({bookId:bookId,isDeleted:false})).length
