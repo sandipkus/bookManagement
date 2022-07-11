@@ -21,7 +21,11 @@ const createBooks = async function (req, res) {
 
         let bookReg = /^([a-zA-Z0-9]+)/;
         if (!bookReg.test(bookData.title)) {
-            return res.status(400).send({ status: false, message: "input is invalid " });
+            return res.status(400).send({ status: false, message: "title is invalid " });
+        }
+        if(await bookModel.findOne({title:bookData.title})){
+            return res.status(400).send({ status: false, message: "title already present." });
+ 
         }
 
         //validation for excerpt

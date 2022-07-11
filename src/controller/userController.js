@@ -17,13 +17,13 @@ let userRegister = async function (req, res) {
         //validation for title
         if (!Object.keys(userBody).includes("title")) {
             return res.status(400).send({ status: false, message: "Title is missing." })
-            
+
         }
-    
-        if (typeof(userBody.title)!= "string"){
+
+        if (typeof (userBody.title) != "string") {
             return res.status(400).send({ status: false, message: "Title should be in string." })
         }
-        if (!userBody.title||userBody.title.trim() == "") {
+        if (!userBody.title || userBody.title.trim() == "") {
             return res.status(400).send({ status: false, message: "Title can't be empty." })
         }
         if (["Mr", "Mrs", "Miss"].indexOf(userBody.title) === -1) {
@@ -34,7 +34,7 @@ let userRegister = async function (req, res) {
         if (!Object.keys(userBody).includes("name")) {
             return res.status(400).send({ status: false, message: "name is missing." })
         }
-        if (typeof(userBody.name)!= "string"){
+        if (typeof (userBody.name) != "string") {
             return res.status(400).send({ status: false, message: "Name should be in string." })
         }
         if (userBody.name.trim() == "") {
@@ -48,13 +48,11 @@ let userRegister = async function (req, res) {
         if (!Object.keys(userBody).includes("phone")) {
             return res.status(400).send({ status: false, message: "phone is missing." })
         }
-        if (userBody.phone.trim()== "") {
+        if (userBody.phone.trim() == "") {
             return res.status(400).send({ status: false, message: "phone can't be empty." })
         }
-        if (userBody.phone.length != 10) {
-            return res.status(400).send({ status: false, message: "phone number should be of 10 digits" })
-        }
-        
+        if (!validator.isValidMobile(userBody.phone)) return res.status(400).send({ status: false, msg: "Pls Enter Valid PAN India Number" })
+
         let isPhoneExist = await userModel.findOne({ phone: userBody.phone })
         if (isPhoneExist) return res.status(400).send({ status: false, message: "phone number already exists, plaease give another one." })
 
@@ -99,7 +97,7 @@ const userLogin = async function (req, res) {
         let userName = req.body.userName;
         let password = req.body.password;
 
-      
+
         if (Object.keys(req.body).length == 0) {
             return res.status(400).send({ status: false, msg: "Data is required" })
         }
@@ -114,12 +112,12 @@ const userLogin = async function (req, res) {
             return res.status(401).send({ status: false, msg: "INVALID CREDENTIALS" });
         }
 
-        let iat = Math.floor(Date.now() / 1000) 
-        let exp= iat + (60*60)
-        let payload = { _id: user._id, iat:iat, exp:exp}                      //Setting the payload
+        let iat = Math.floor(Date.now() / 1000)
+        let exp = iat + (60 * 60)
+        let payload = { _id: user._id, iat: iat, exp: exp }                      //Setting the payload
         let token = jwt.sign(payload, "group63");
         res.setHeader("x-api-key", token);
-        
+
         res.send({ status: true, token: token });
 
     } catch (error) {

@@ -18,10 +18,15 @@ let containNumbers = function (data) {
     if (/\d/.test(data)) return true
 }
 
-
 let checkEmail = function (data) {
     if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(data)) return true
 }
+
+const isValidMobile=(mobile)=>{
+    if(/^[0]?[6789]\d{9}$/.test(mobile))
+    return true
+}
+
 
 
 const isValidObjectId = (ObjectId) => {
@@ -32,4 +37,5 @@ module.exports.isObjectId = isObjectId
 module.exports.containNumbers = containNumbers
 module.exports.checkEmail = checkEmail
 module.exports.isValid =isValid
+module.exports.isValidMobile =isValidMobile
 module.exports.isValidObjectId =isValidObjectId
