@@ -22,9 +22,9 @@ router.put("/books/:bookId",MW.authentication,MW.authorisation, book.updateBook)
        
 router.delete("/books/:bookId",MW.authentication,MW.authorisation, book.deleteBook)
 
-router.post("/books/:bookId/review",review.addReview)
+router.post("/books/:bookId/review",MW.authentication,review.addReview)
 
-router.put("/books/:bookId/review/:reviewId",review.updateReview)
+
 
 
 
