@@ -181,6 +181,8 @@ const getBooksById = async (req, res) => {
 const updateBook = async function (req, res) {
     try {
         let bookId = req.params.bookId;
+        
+        //validation for bookId
         if (!validator.isObjectId(bookId)) {
             return res.status(404).send({ status: false, msg: "enter a valid bookId" });
         }
@@ -188,51 +190,59 @@ const updateBook = async function (req, res) {
         if (!findBookId){
             return res.status(404).send({ status: false, msg: "No such book exist" });
         }
+        //if that book is deleted
         if (findBookId.isDeleted == true)
-            return res.status(404).send({
-                status: false,
-                msg: "No such book found or has already been deleted",
-            });
+            return res.status(404).send({status: false,msg: "No such book found or has already been deleted",});
        
         let bookData = req.body;
-
+        
+        //validation for body
         if (validator.isBodyExist(bookData))
-            return res.status(400).send({
-                status: false,
-                message: " Please provide book details to Update",
+            return res.status(400).send({status: false,message: " Please provide book details to Update",
             });
-
-
+        
+        //validation for title
         let bookReg = /^([a-zA-Z0-9]+)/;
         if (!bookReg.test(bookData.title)) {
-            return res
-                .status(400)
-                .send({ status: false, message: "title is invalid " });
+            return res.status(400).send({ status: false, message: "! title input is invalid. Please enter correct input" });
         }
 
         let titlePresent = await bookModel.findOne({ title: bookData.title });
         if (titlePresent) {
-            return res
-                .status(400)
-                .send({
-                    status: false,
-                    message: ` '${bookData.title}' is already exist!. Please try new title`,
-                });
+            return res.status(400).send({status: false, message: ` '${bookData.title}' is already exist!. Please try new title`,});
         }
-
+        
+        //validation for excerpt
+        if (!bookReg.test(bookData.excerpt)) {
+            return res.status(400).send({ status: false, message: "! excerpt input is invalid. Please enter correct input" });
+        }
+        let excerptPresent = await bookModel.findOne({ excerpt: bookData.excerpt });
+        if (excerptPresent) {
+            return res.status(400).send({status: false,message: ` '${bookData.excerpt}' is already exist!. Please try new excerpt`,});
+        }
+        
+        //validation for ISBN
+        if (validator.containNumbers(bookData.ISBN)) {
+            return res.status(400).send({ status: false, message: "! ISBN input is invalid. Please enter input with Numbers to Update" });
+        }
         let isISBN = await bookModel.findOne({ ISBN: bookData.ISBN });
         if (isISBN) {
-            return res
-                .status(400)
-                .send({ status: false, message: ` '${bookData.ISBN}' is already exist!. Please try new ISBN` });
-
+            return res.status(400).send({ status: false, message: ` '${bookData.ISBN}' is already exist!. Please try new ISBN` });
+        }
+        
+        //validation for realease Date
+        let dateReg = /^\d{4}[\/\-](0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])$/
+        if (!dateReg.test(bookData.releasedAt)) {
+            return res.status(400).send({ status: false, message: "! date input is invalid. Please enter date input in this format (YYYY-MM-DD)" });
+        }
+        let isDate = await bookModel.findOne({ releasedAt: bookData.releasedAt });
+        if(isDate){
+            return res.status(200).send({status:true, data:isDate})
         }
 
         //update Book details
         let updatedBook = await bookModel.findOneAndUpdate({ _id: bookId }, bookData, { new: true });
-        return res
-            .status(200)
-            .send({ status: true, message: "Success", data: updatedBook });
+        return res.status(200).send({ status: true, message: "Success", data: updatedBook });
     } catch (error) {
         res.status(500).send({ status: false, Error: error.message });
     }
