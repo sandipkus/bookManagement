@@ -15,14 +15,14 @@ const addReview = async function(req,res){
    
 
     let review = req.body
-
+    review.bookId = bookId
     //validation for bookId
-    if (!Object.keys(review).includes("bookId")) {
-        return res.status(400).send({ status: false, message: "bookId is missing." })
-    }
-    if (review.bookId.trim() == " ") {
-        return res.status(400).send({ status: false, message: "bookId can't be empty." })
-    }
+    // if (!Object.keys(review).includes("bookId")) {
+    //     return res.status(400).send({ status: false, message: "bookId is missing." })
+    // }
+    // if (review.bookId.trim() == " ") {
+    //     return res.status(400).send({ status: false, message: "bookId can't be empty." })
+    // }
 
     //validation for reviewedBy
     if (!Object.keys(review).includes("reviewedBy")) {
@@ -33,12 +33,14 @@ const addReview = async function(req,res){
     }
 
     //validation for reviewedAt
-    if (!Object.keys(review).includes("reviewedAt")) {
-        return res.status(400).send({ status: false, message: "reviewedAt is missing." })
-    }
-    if (review.reviewdAt== "") {
-        return res.status(400).send({ status: false, message: "reviewedAt can't be empty." })
-    }
+    review.reviewedAt = new Date();
+    releasedAt:moment(releasedAt).toISOString()
+    // if (!Object.keys(review).includes("reviewedAt")) {
+    //     return res.status(400).send({ status: false, message: "reviewedAt is missing." })
+    // }
+    // if (review.reviewdAt== "") {
+    //     return res.status(400).send({ status: false, message: "reviewedAt can't be empty." })
+    // }
 
     //validation for rating
     if (!Object.keys(review).includes("rating")) {
@@ -121,7 +123,7 @@ let deleteReview = async function(req,res){
     if (!validator.isObjectId(reviewId)) {
         return res.status(400).send({ status: false, message: "Enter a correct review ObjectId", })
     }
-    let review = await reviewModel.findOne({ _id: reviewId, bookId:book._id })
+    let review = await reviewModel.findOne({ _id: reviewId, bookId:book._id, isDeleted: false})
     if (!review) return res.status(404).send({ status: false, message: "This review does not exist. Please enter correct review ObjectId", })
 
     if(review.isDeleted===true){

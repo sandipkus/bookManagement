@@ -11,7 +11,7 @@ const isValid = function (value) {
 };
 
 let isObjectId = function (data) {
-    return mongoose.Types.ObjectId.isValid(data)
+    return mongoose.Types.ObjectId.isValid (data)
 }
 
 let containNumbers = function (data) {
