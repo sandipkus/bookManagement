@@ -34,7 +34,6 @@ const authorisation = async function (req, res, next) {
     let userToBeModified = req.params.bookId
     if(!validator.isObjectId(userToBeModified)){
       return res.status(400).send({ status: false, msg: 'Enter a valid bookId' })
-
     }
 
     let book = await bookModel.findById({ _id: userToBeModified })   //id in bookModel is same as getting from req.params or not
