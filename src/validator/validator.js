@@ -11,16 +11,18 @@ const isValid = function (value) {
 };
 
 let isObjectId = function (data) {
-    return mongoose.Types.ObjectId.isValid(data)
+    return mongoose.Types.ObjectId.isValid (data)
 }
 
 let containNumbers = function (data) {
     if (/\d/.test(data)) return true
 }
 
+
 let checkEmail = function (data) {
     if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(data)) return true
 }
+
 
 const isValidObjectId = (ObjectId) => {
         return mongoose.Types.ObjectId.isValid(ObjectId);

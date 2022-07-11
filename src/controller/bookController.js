@@ -76,7 +76,7 @@ const createBooks = async function (req, res) {
         //     return res
         //         .status(400)
         //         .send({ status: false, message: "released Date of book is required" });
-        bookData.releasedAt = moment(new Date()).format("YYYY-MM-DD")
+        bookData.releasedAt = moment().format("YYYY-MM-DD")
 
         let saveBooks = await bookModel.create(bookData);
         res.status(201).send({ status: true, message: "success", data: saveBooks });
@@ -124,7 +124,7 @@ const getBook = async function (req, res) {
 
 //---------------------------------------get Api(find book by BookId)----------------------------------------
 
-let getBooksById = async (req, res) => {
+const getBooksById = async (req, res) => {
     try {
         //taking bookId from the user in Path Params
         let bookId = req.params.bookId;
@@ -168,7 +168,7 @@ let getBooksById = async (req, res) => {
             reviewsData:reviews
 
         }
-        res.status(200).send({ status: true, message: "succeed", data: bookWithReviews })
+        res.status(200).send({ status: true, message: "success", data: bookWithReviews })
 
 
     } catch (err) {
@@ -187,9 +187,9 @@ const updateBook = async function (req, res) {
             return res.status(404).send({ status: false, msg: "enter a valid bookId" });
         }
         let findBookId = await bookModel.findById(bookId);
-        if (!findBookId)
+        if (!findBookId){
             return res.status(404).send({ status: false, msg: "No such book exist" });
-        
+        }
         //if that book is deleted
         if (findBookId.isDeleted == true)
             return res.status(404).send({status: false,msg: "No such book found or has already been deleted",});
@@ -248,13 +248,14 @@ const updateBook = async function (req, res) {
     }
 }
 
+
 //------------------------------delete Api (delete book)--------------------------------------------------//
 
-let deleteBook = async function (req, res) {
+const deleteBook = async function (req, res) {
     try {
         let bookId = req.params.bookId
         if (!validator.isObjectId(bookId)) {
-            return res.status(400).send({ status: false, message: "Enter a correct book ObjectId", })
+            return res.status(400).send({ status: false, message: "Enter a correct bookId", })
         }
         let book = await bookModel.findOne({ _id: bookId, isDeleted: false })
         if (!book) return res.status(404).send({ status: false, message: "This Book does not exist. Please enter correct Book ObjectId", })

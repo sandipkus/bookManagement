@@ -17,6 +17,11 @@ let userRegister = async function (req, res) {
         //validation for title
         if (!Object.keys(userBody).includes("title")) {
             return res.status(400).send({ status: false, message: "Title is missing." })
+            
+        }
+    
+        if (typeof(userBody.title)!= "string"){
+            return res.status(400).send({ status: false, message: "Title should be in string." })
         }
         if (!userBody.title||userBody.title.trim() == "") {
             return res.status(400).send({ status: false, message: "Title can't be empty." })
@@ -28,6 +33,9 @@ let userRegister = async function (req, res) {
         //validation for name
         if (!Object.keys(userBody).includes("name")) {
             return res.status(400).send({ status: false, message: "name is missing." })
+        }
+        if (typeof(userBody.name)!= "string"){
+            return res.status(400).send({ status: false, message: "Name should be in string." })
         }
         if (userBody.name.trim() == "") {
             return res.status(400).send({ status: false, message: "name can't be empty." })
@@ -46,6 +54,7 @@ let userRegister = async function (req, res) {
         if (userBody.phone.length != 10) {
             return res.status(400).send({ status: false, message: "phone number should be of 10 digits" })
         }
+        
         let isPhoneExist = await userModel.findOne({ phone: userBody.phone })
         if (isPhoneExist) return res.status(400).send({ status: false, message: "phone number already exists, plaease give another one." })
 
@@ -66,7 +75,7 @@ let userRegister = async function (req, res) {
         if (!Object.keys(userBody).includes("password")) {
             return res.status(400).send({ status: false, message: "password is missing." })
         }
-        if (userBody.password.trim() == " ") {
+        if (userBody.password.trim() == "") {
             return res.status(400).send({ status: false, message: "password can't be empty." })
         }
         if (userBody.password.length > 15 || userBody.password.length < 8) {
