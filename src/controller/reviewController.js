@@ -130,7 +130,7 @@ let updateReview = async function (req, res) {
             reviewsData: reviews
 
         }
-        res.status(200).send({ status: true, message: "succeed", data: bookWithReviews })
+        res.status(200).send({ status: true, message: "success", data: bookWithReviews })
 
     } catch (err) {
         res.status(500).send({ status: false, message: err.message })
