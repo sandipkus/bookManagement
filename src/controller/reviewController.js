@@ -72,6 +72,10 @@ let updateReview = async function (req, res) {
         if (!review) return res.status(404).send({ status: false, message: "This review does not exist. Please enter correct review ObjectId", })
 
         let upreview = req.body
+
+        if (validator.isBodyExist(upreview))
+        return res.status(400).send({status: false,message: " Please provide review details to Update",});
+        
         if (upreview.review) {
             if (typeof (upreview.review) != "string") {
                 return res.status(400).send({ status: false, message: "review should be string." })
@@ -117,7 +121,7 @@ let updateReview = async function (req, res) {
             reviewsData: reviews
 
         }
-        res.status(200).send({ status: true, message: "succeed", data: bookWithReviews })
+        res.status(200).send({ status: true, message: "success", data: bookWithReviews })
 
     } catch (err) {
         res.status(500).send({ status: false, message: err.message })
