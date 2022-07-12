@@ -164,7 +164,7 @@ const userLogin = async function (req, res) {
         }
 
         let iat = Math.floor(Date.now() / 1000)
-        let exp = iat + (60 * 60 * 12)
+        let exp = iat + (60 * 60)
         let payload = { _id: user._id, iat: iat, exp: exp }                      //Setting the payload
         let token = jwt.sign(payload, "group63");
         res.setHeader("x-api-key", token);
@@ -173,7 +173,7 @@ const userLogin = async function (req, res) {
             status: true,
             message: 'Success',
             data: {
-                token: tokenmessage
+                token: token
             }
         });
 

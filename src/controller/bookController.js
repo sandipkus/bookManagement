@@ -246,16 +246,11 @@ const updateBook = async function (req, res) {
 
 
         //validation for ISBN
-        if (bookData.ISBN) {
-
-            if (!validator.containNumbers(bookData.ISBN)) {
-                return res.status(400).send({ status: false, message: "! ISBN input is invalid. Please enter input with Numbers to Update" });
-            }
             let isISBN = await bookModel.findOne({ ISBN: bookData.ISBN });
             if (isISBN) {
                 return res.status(400).send({ status: false, message: ` '${bookData.ISBN}' is already exist!. Please try new ISBN` });
             }
-        }
+        
 
         //validation for realease Date
         if (bookData.releasedAt) {
@@ -264,10 +259,7 @@ const updateBook = async function (req, res) {
             if (!dateReg.test(bookData.releasedAt)) {
                 return res.status(400).send({ status: false, message: "! date input is invalid. Please enter date input in this format (YYYY-MM-DD)" });
             }
-            let isDate = await bookModel.findOne({ releasedAt: bookData.releasedAt });
-            if (isDate) {
-                return res.status(200).send({ status: true, data: isDate })
-            }
+
         }
         //update Book details
         let updatedBook = await bookModel.findOneAndUpdate({ _id: bookId }, bookData, { new: true });

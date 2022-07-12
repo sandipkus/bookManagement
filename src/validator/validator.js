@@ -16,6 +16,7 @@ let isObjectId = function (data) {
 
 let containNumbers = function (data) {
     if (/\d/.test(data)) return true
+    return false
 }
 
 let checkEmail = function (data) {
