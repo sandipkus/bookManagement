@@ -72,11 +72,18 @@ let updateReview = async function (req, res) {
         if (!review) return res.status(404).send({ status: false, message: "This review does not exist. Please enter correct review ObjectId", })
 
         let upreview = req.body
-        if (upreview.review) {
+
+        if(upreview == undefined||Object.keys(upreview).length===0){
+            return res.status(400).send({ status: false, message: "Please give some data to update" })
+        }
+        if (upreview.review =="") {
+            return res.status(400).send({ status: false, message: "review input can't be empty." })
+        }
+        if(upreview.review){
             if (typeof (upreview.review) != "string") {
                 return res.status(400).send({ status: false, message: "review should be string." })
             }
-            if (upreview.review.trim() == "") {
+            if (upreview.review.trim().length == 0) {
                 return res.status(400).send({ status: false, message: "review input can't be empty." })
             }
         }
