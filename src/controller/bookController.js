@@ -171,7 +171,7 @@ const getBooksById = async (req, res) => {
             return res.status(404).send({ status: false, message: "Book already deleted!" });
         }
 
-        let reviews = await reviewModel.find({ bookId: bookId })
+        let reviews = await reviewModel.find({ bookId: bookId ,isdeleted:false})
 
         let bookWithReviews = {
             _id: findbook._id,
